@@ -1,8 +1,11 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
+
 <meta charset="UTF-8">
+
 <title>Car Location Viewer</title>
 
 <script type="module">
@@ -16,6 +19,7 @@ import {
   onValue
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 
 const firebaseConfig = {
 
@@ -41,11 +45,13 @@ const firebaseConfig = {
 
 };
 
+
 const app = initializeApp(firebaseConfig);
 
 const db = getDatabase(app);
 
 const locationRef = ref(db, 'car/location');
+
 
 onValue(locationRef, (snapshot) => {
 
@@ -55,13 +61,46 @@ onValue(locationRef, (snapshot) => {
 
     const lat = data.lat;
     const lon = data.lon;
-    const speed = data.speed;
-    const status = data.status;
-
-    const updateTime = new Date(data.time);
 
     document.getElementById("status").innerHTML =
 
-      "状態: " + status +
+      "LAT: " + lat +
+      "<br>LON: " + lon;
+
+    const mapURL =
+      "https://maps.google.com/?q=" +
+      lat + "," + lon;
+
+    document.getElementById("mapLink").href =
+      mapURL;
+
+  }
+
+});
+
+</script>
+
+</head>
+
+<body>
+
+<h1>Car Location</h1>
+
+<p id="status">
+
+Waiting...
+
+</p>
+
+<a id="mapLink" target="_blank">
+
+<button>
+
+GoogleMapを開く
+
+</button>
+
+</a>
+
 </body>
 </html>
