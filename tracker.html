@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
@@ -27,11 +28,11 @@ const firebaseConfig = {
   authDomain:
   "real-time-location-data.firebaseapp.com",
 
-  projectId:
-  "real-time-location-data",
-
   databaseURL:
   "https://real-time-location-data-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+  projectId:
+  "real-time-location-data",
 
   storageBucket:
   "real-time-location-data.firebasestorage.app",
@@ -49,6 +50,8 @@ const app = initializeApp(firebaseConfig);
 
 const db = getDatabase(app);
 
+let trackingInterval = null;
+
 
 function sendLocation() {
 
@@ -61,13 +64,19 @@ function sendLocation() {
 
       document.getElementById("status").innerHTML =
 
-      "LAT: " + lat + "<br>LON: " + lon;
+        "共有中<br><br>" +
+
+        "LAT: " + lat +
+
+        "<br>LON: " + lon;
+
 
       set(ref(db, 'car/location'), {
 
         lat: lat,
         lon: lon,
-        time: Date.now()
+        time: Date.now(),
+        active: true
 
       });
 
@@ -85,7 +94,38 @@ function sendLocation() {
 }
 
 
-window.sendLocation = sendLocation;
+function startTracking() {
+
+  if(trackingInterval == null){
+
+    sendLocation();
+
+    trackingInterval = setInterval(sendLocation, 10000);
+
+    document.getElementById("mode").innerHTML =
+    "TRACKING START";
+
+  }
+
+}
+
+
+function stopTracking() {
+
+  clearInterval(trackingInterval);
+
+  trackingInterval = null;
+
+  document.getElementById("mode").innerHTML =
+  "TRACKING STOP";
+
+  set(ref(db, 'car/location/active'), false);
+
+}
+
+
+window.startTracking = startTracking;
+window.stopTracking = stopTracking;
 
 </script>
 
@@ -95,9 +135,23 @@ window.sendLocation = sendLocation;
 
 <h1>Car Tracker</h1>
 
-<button onclick="sendLocation()">
+<h2 id="mode">
 
-位置送信
+STOPPED
+
+</h2>
+
+<button onclick="startTracking()">
+
+共有開始
+
+</button>
+
+<br><br>
+
+<button onclick="stopTracking()">
+
+共有停止
 
 </button>
 
