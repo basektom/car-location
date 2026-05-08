@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Car Tracker</title>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  set
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyC62a1FpZHkr6SkDpvuHr64NMEPuVVns3c",
+
+  authDomain:
+  "real-time-location-data.firebaseapp.com",
+
+  projectId:
+  "real-time-location-data",
+
+  databaseURL:
+  "https://real-time-location-data-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+  storageBucket:
+  "real-time-location-data.firebasestorage.app",
+
+  messagingSenderId:
+  "1072338359237",
+
+  appId:
+  "1:1072338359237:web:16c958dcf17cff49f331ac"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+
+function sendLocation() {
+
+  navigator.geolocation.getCurrentPosition(
+
+    (position) => {
+
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      document.getElementById("status").innerHTML =
+
+      "LAT: " + lat + "<br>LON: " + lon;
+
+      set(ref(db, 'car/location'), {
+
+        lat: lat,
+        lon: lon,
+        time: Date.now()
+
+      });
+
+    },
+
+    (error) => {
+
+      document.getElementById("status").innerHTML =
+      "GPS ERROR";
+
+    }
+
+  );
+
+}
+
+
+window.sendLocation = sendLocation;
+
+</script>
+
+</head>
+
+<body>
+
+<h1>Car Tracker</h1>
+
+<button onclick="sendLocation()">
+
+位置送信
+
+</button>
+
+<p id="status">
+
+待機中...
+
+</p>
+
+</body>
+</html>
