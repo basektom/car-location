@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -62,11 +61,36 @@ function sendLocation() {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
 
+      let speed = position.coords.speed;
+
+      if(speed == null){
+        speed = 0;
+      }
+
+      speed = speed * 3.6;
+
+      speed = speed.toFixed(1);
+
+      let driveStatus = "停車中";
+
+      if(speed >= 5 && speed < 30){
+        driveStatus = "低速移動";
+      }
+
+      if(speed >= 30){
+        driveStatus = "走行中";
+      }
+
+
       document.getElementById("status").innerHTML =
 
         "共有中<br><br>" +
 
-        "LAT: " + lat +
+        "状態: " + driveStatus +
+
+        "<br><br>速度: " + speed + " km/h" +
+
+        "<br><br>LAT: " + lat +
 
         "<br>LON: " + lon;
 
@@ -75,6 +99,8 @@ function sendLocation() {
 
         lat: lat,
         lon: lon,
+        speed: speed,
+        status: driveStatus,
         time: Date.now(),
         active: true
 
@@ -87,6 +113,10 @@ function sendLocation() {
       document.getElementById("status").innerHTML =
       "GPS ERROR";
 
+    },
+
+    {
+      enableHighAccuracy: true
     }
 
   );
